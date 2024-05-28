@@ -1,7 +1,6 @@
-﻿using System.Data.Entity;
-using System;
-using System.Data.SQLite;
+﻿using System;
 using System.IO;
+using System.Data.SQLite;
 
 namespace Practica
 {
