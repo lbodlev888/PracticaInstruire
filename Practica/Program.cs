@@ -106,7 +106,7 @@ namespace Practica
                     break;
                 case 2:
                     int[] shops = Magazin.getShops().ToArray();
-                    string message = "Ce magazin alegi?", errorMsg = "Nu exista asa magazin";
+                    string message = "Ce magazin alegi? ", errorMsg = "Nu exista asa magazin";
                     int selMag = getOption(message, errorMsg, shops);
                     Console.WriteLine();
                     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -144,46 +144,49 @@ namespace Practica
                     }
                     printMessage(session.ToString(), ConsoleColor.Yellow);
                     string message = "";
-                    switch(session.type)
+                    while (true)
                     {
-                        case 0:
-                            message = "1 - Arata magazinele\n2 - Arata piesele unui magazin specific\n" +
-                                "3 - Comanda o piesa\n4 - Meniul principal\nCe doresti sa faci? ";
-                            options = new int[] { 1, 2, 3, 4 };
-                            option = getOption(message, optionError, options);
-                            if(option == 4)
-                            {
-                                session = null;
-                                Main();
-                                return;
-                            }
-                            userWork(option, session);
-                            break;
-                        case 1:
-                            message = "1 - Adauga o piesa\n2 - Modifica o piesa existenta\n" +
-                                "3 - Sterge o piesa existenta\n4 - Meniul principal\nCe doresti sa faci? ";
-                            options = new int[] { 1, 2, 3, 4 };
-                            option = getOption(message, optionError, options);
-                            if(option == 6)
-                            {
-                                session = null;
-                                Main();
-                                return;
-                            }
-                            moderatorWork(option);
-                            break;
-                        case 2:
-                            message = "1 - Adauga magazin\n2 - Sterge magazin\n3 - Modifica magazin\n4 - Privilegiaza utilizatorul\n5 - Sterge utilizatorul\n6 - Log out\nCe doresti sa faci? ";
-                            options = new int[] { 1, 2, 3, 4, 5, 6 };
-                            option = getOption(message, optionError, options);
-                            if(option == 6)
-                            {
-                                session = null;
-                                Main();
-                                return;
-                            }
-                            adminWork(option);
-                            break;
+                        switch (session.type)
+                        {
+                            case 0:
+                                message = "1 - Arata magazinele\n2 - Arata piesele unui magazin specific\n" +
+                                    "3 - Comanda o piesa\n4 - Meniul principal\nCe doresti sa faci? ";
+                                options = new int[] { 1, 2, 3, 4 };
+                                option = getOption(message, optionError, options);
+                                if (option == 4)
+                                {
+                                    session = null;
+                                    Main();
+                                    return;
+                                }
+                                userWork(option, session);
+                                break;
+                            case 1:
+                                message = "1 - Adauga o piesa\n2 - Modifica o piesa existenta\n" +
+                                    "3 - Sterge o piesa existenta\n4 - Meniul principal\nCe doresti sa faci? ";
+                                options = new int[] { 1, 2, 3, 4 };
+                                option = getOption(message, optionError, options);
+                                if (option == 4)
+                                {
+                                    session = null;
+                                    Main();
+                                    return;
+                                }
+                                moderatorWork(option);
+                                break;
+                            case 2:
+                                message = "1 - Adauga magazin\n2 - Sterge magazin\n3 - Modifica magazin\n4 - Privilegiaza utilizatorul\n5 - Sterge utilizatorul\n6 - Log out\nCe doresti sa faci? ";
+                                options = new int[] { 1, 2, 3, 4, 5, 6 };
+                                option = getOption(message, optionError, options);
+                                if (option == 6)
+                                {
+                                    session = null;
+                                    Main();
+                                    return;
+                                }
+                                adminWork(option);
+                                break;
+                        }
                     }
                     break;
                 case 3:

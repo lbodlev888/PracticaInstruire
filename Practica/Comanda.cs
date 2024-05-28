@@ -21,6 +21,11 @@ namespace Practica
             idPiesa = getPart();
             DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
             int cant = Convert.ToInt32(db.getScalar("SELECT Cantitate FROM Piesa WHERE idPart=" + idPiesa));
+            if(cant == 0)
+            {
+                Program.printMessage("In stoc sunt 0 piesa", ConsoleColor.Red);
+                return;
+            }
             Console.WriteLine($"In stoc: {cant} piese");
             while (true)
             {
