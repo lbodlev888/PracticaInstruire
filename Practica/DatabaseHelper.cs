@@ -1,5 +1,4 @@
-﻿using System.Data.Entity;
-using System;
+﻿using System;
 using System.Data.SQLite;
 using System.IO;
 
