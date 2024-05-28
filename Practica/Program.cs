@@ -76,6 +76,9 @@ namespace Practica
                 case 5:
                     User.deleteUser();
                     break;
+                case 6:
+                    DatabaseHelper.exportDatabase();
+                    break;
             }
         }
         static void moderatorWork(int option)
@@ -121,7 +124,8 @@ namespace Practica
         }
         static void Main()
         {
-            if (!File.Exists(DATABASE)) SQLiteConnection.CreateFile(DATABASE);
+            if (!File.Exists(DATABASE))
+                SQLiteConnection.CreateFile(DATABASE);
             int[] options = { 1, 2, 3 };
             string intro = "\tBine ai venit\n1 - Creare cont nou\n2 - Logare cu un cont existent\n3 - Iesire\nCe doresti sa faci? ";
             string optionError = "\nEroare: Nu exista o astfel de optiune\n";
@@ -175,10 +179,10 @@ namespace Practica
                                 moderatorWork(option);
                                 break;
                             case 2:
-                                message = "1 - Adauga magazin\n2 - Sterge magazin\n3 - Modifica magazin\n4 - Privilegiaza utilizatorul\n5 - Sterge utilizatorul\n6 - Log out\nCe doresti sa faci? ";
-                                options = new int[] { 1, 2, 3, 4, 5, 6 };
+                                message = "1 - Adauga magazin\n2 - Sterge magazin\n3 - Modifica magazin\n4 - Privilegiaza utilizatorul\n5 - Sterge utilizatorul\n6 - Exporteaza baza de date in fisier CSV\n7 - Log out\nCe doresti sa faci? ";
+                                options = new int[] { 1, 2, 3, 4, 5, 6, 7 };
                                 option = getOption(message, optionError, options);
-                                if (option == 6)
+                                if (option == 7)
                                 {
                                     session = null;
                                     Main();
@@ -188,7 +192,6 @@ namespace Practica
                                 break;
                         }
                     }
-                    break;
                 case 3:
                     return;
             }

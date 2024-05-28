@@ -1,4 +1,6 @@
-﻿using System.Data.SQLite;
+﻿using System.Data.Entity;
+using System;
+using System.Data.SQLite;
 using System.IO;
 
 namespace Practica
@@ -35,6 +37,33 @@ namespace Practica
         {
             SQLiteCommand cmd = new SQLiteCommand(sql, _connection);
             return cmd.ExecuteScalar();
+        }
+        public static void exportDatabase()
+        {
+            string[] tables = { "UsersType", "Users", "Piesa", "Magazin", "Comenzi" };
+            DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
+            SQLiteDataReader reader;
+            foreach (string table in tables)
+            {
+                reader = db.getReader("SELECT * FROM " + table);
+                string[] columns = new string[reader.FieldCount];
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    columns[i] = reader.GetName(i);
+                    File.AppendAllText(table + ".csv", reader.GetName(i) + ";");
+                }
+                File.AppendAllText(table + ".csv", "\n");
+                while (reader.Read())
+                {
+                    foreach (string col in columns)
+                        File.AppendAllText(table + ".csv", reader[col].ToString() + ";");
+                    File.AppendAllText(table + ".csv", "\n");
+                }
+                File.AppendAllText(table + ".csv", "\n");
+                reader.Close();
+            }
+            db.closeConnection();
+            Program.printMessage("Baza de date a fost exportata", ConsoleColor.Green);
         }
     }
 }
