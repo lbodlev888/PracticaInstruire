@@ -34,8 +34,8 @@ CREATE TABLE Comenzi (
 	Data date NOT NULL,
 	Cantitate NUMERIC NOT NULL DEFAULT 1,
 	Adresa TEXT,
-	idPiese INTEGER NOT NULL,
-	FOREIGN KEY (idPiese) REFERENCES Produs(idPart)
+	idPiesa INTEGER NOT NULL,
+	FOREIGN KEY (idPiesa) REFERENCES Produs(idPart)
 );
 
 INSERT INTO UsersType (idType, description) VALUES

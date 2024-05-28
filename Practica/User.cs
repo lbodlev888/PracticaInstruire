@@ -69,6 +69,13 @@ namespace Practica
             db.closeConnection();
             return check;
         }
+        public int getUser()
+        {
+            DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
+            int id = Convert.ToInt32(db.getScalar($"SELECT idUser FROM Users WHERE Username='{Username}'"));
+            db.closeConnection();
+            return id;
+        }
         public static User checkPassword(string username, string password)
         {
             string plainPassword = password;

@@ -91,12 +91,9 @@ namespace Practica
                 case 3:
                     Piesa.deletePart();
                     break;
-                case 4:
-                    //nu face nimic
-                    break;
             }
         }
-        static void userWork(int option)
+        static void userWork(int option, User session)
         {
             switch(option)
             {
@@ -111,13 +108,14 @@ namespace Practica
                     int[] shops = Magazin.getShops().ToArray();
                     string message = "Ce magazin alegi?", errorMsg = "Nu exista asa magazin";
                     int selMag = getOption(message, errorMsg, shops);
+                    Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Piesa.getParts(selMag);
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine();
                     break;
                 case 3:
-                    //comanda o piesa
-                    break;
-                case 4:
-                    //anuleaza comanda
+                    new Comanda(session.getUser());
                     break;
             }
         }
@@ -150,22 +148,28 @@ namespace Practica
                     {
                         case 0:
                             message = "1 - Arata magazinele\n2 - Arata piesele unui magazin specific\n" +
-                                "3 - Comanda o piesa\n4 - Anuleaza comanda\n5 - Meniul principal\nCe doresti sa faci? ";
-                            options = new int[] { 1, 2, 3, 4, 5 };
+                                "3 - Comanda o piesa\n4 - Meniul principal\nCe doresti sa faci? ";
+                            options = new int[] { 1, 2, 3, 4 };
                             option = getOption(message, optionError, options);
-                            if(option == 5)
+                            if(option == 4)
                             {
                                 session = null;
                                 Main();
                                 return;
                             }
-                            userWork(option);
+                            userWork(option, session);
                             break;
                         case 1:
                             message = "1 - Adauga o piesa\n2 - Modifica o piesa existenta\n" +
                                 "3 - Sterge o piesa existenta\n4 - Meniul principal\nCe doresti sa faci? ";
                             options = new int[] { 1, 2, 3, 4 };
                             option = getOption(message, optionError, options);
+                            if(option == 6)
+                            {
+                                session = null;
+                                Main();
+                                return;
+                            }
                             moderatorWork(option);
                             break;
                         case 2:
