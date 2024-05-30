@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -89,6 +91,8 @@ namespace Practica
                 if (password != reader["Password"].ToString())
                 {
                     Program.printMessage("\nAutentificarea nu a reusit", ConsoleColor.Red);
+			reader.Close();
+	                db.closeConnection();
                     return null;
                 }
                 Program.printMessage("\nAutentificat cu succes", ConsoleColor.Green);
@@ -101,24 +105,26 @@ namespace Practica
             catch(Exception)
             {
                 Program.printMessage("\nCont inexistent", ConsoleColor.Red);
+		reader.Close();
                 db.closeConnection();
                 return null;
             }
         }
-        /*public bool updatePassword(string oldPassword, string newPassword)
-        {
-            oldPassword = Convert.ToBase64String(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(oldPassword)));
-            if (oldPassword != Password) return false;
-            Password = Convert.ToBase64String(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(newPassword)));
-            db = new DatabaseHelper(Program.DATABASE);
-            db.Query($"UPDATE Users SET Password='{Password}' WHERE Username='{Username}'");
-            db.closeConnection();
-            return true;
-        }*/
         public static void setprivilege()
         {
-            int count = getUsers();
-            string message = "Ce utilizator doresti sa privilegiezi? ", optionError = "Nu avem o astfel de optiune";
+            List<int> ids = getUsers();
+            int[] options = Enumerable.Range(1, ids.Count).ToArray();
+            string message = "Ce utilizator doresti sa privilegiezi? ", optionError = "Nu exista acest utilizator";
+            int userSelect = ids[Program.getOption(message, optionError, options) - 1];
+            message = "0 - Utilizator\n1 - Moderator\n2 - Administrator\nCe privilegiu doresti sa setezi? ";
+            options = new int[] { 0, 1, 2 };
+            int setPriv = Program.getOption(message, optionError, options);
+            DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
+            db.Query($"UPDATE Users SET Type={setPriv} WHERE idUser={userSelect}");
+            db.closeConnection();
+            Program.printMessage("Privilegiu setat", ConsoleColor.Green);
+            /*int count = getUsers();
+            string message = "Ce utilizator doresti sa privilegiezi? ", optionError = "Nu exista acest utilizator";
             int[] options = new int[count];
             for (int i = 1; i <= count; i++) options[i - 1] = i;
             int userSelect = Program.getOption(message, optionError, options);
@@ -128,33 +134,34 @@ namespace Practica
             DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
             db.Query($"UPDATE Users SET Type={setPriv} WHERE idUser={userSelect}");
             db.closeConnection();
-            Program.printMessage("Privilegiu setat", ConsoleColor.Green);
+            Program.printMessage("Privilegiu setat", ConsoleColor.Green);*/
         }
         public static void deleteUser()
         {
-            int count = getUsers();
-            string message = "Ce utilizator doresti sa stergi? ", optionError = "Nu avem o astfel de optiune";
-            int[] options = new int[count];
-            for (int i = 1; i <= count; i++) options[i - 1] = i;
-            int userSelect = Program.getOption(message, optionError, options);
+            List<int> ids = getUsers();
+            int[] options = Enumerable.Range(1, ids.Count).ToArray();
+            string message = "Ce utilizator doresti sa stergi? ", optionError = "Nu exista acest utilizator";
+            int option = ids[Program.getOption(message, optionError, options)-1];
             DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
-            db.Query("DELETE FROM Users WHERE idUser=" + userSelect);
+            db.Query("DELETE FROM Users WHERE idUser=" + option);
             db.closeConnection();
             Program.printMessage("Utilizator sters cu succes", ConsoleColor.Green);
         }
-        private static int getUsers()
+        private static List<int> getUsers()
         {
             DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
-            SQLiteDataReader reader = db.getReader("SELECT idUser, Users.Username, UsersType.description FROM Users JOIN UsersType WHERE Users.Type=UsersType.idType");
-            int count = 0;
-            while(reader.Read())
+            SQLiteDataReader reader = db.getReader("SELECT * FROM Users");
+            List<int> ids = new List<int>();
+            int count = 1;
+            while (reader.Read())
             {
-                Console.WriteLine($"{reader["idUser"]}) {reader["Username"]} {reader["description"]}");
+                Console.WriteLine($"{count}) {reader["Username"]}");
+                ids.Add(Convert.ToInt32(reader["idUser"]));
                 count++;
             }
             reader.Close();
             db.closeConnection();
-            return count;
+            return ids;
         }
         public override string ToString() => $"Nume de utilizator: {Username}\nAdresa: {Adresa}\nTelefon: {Telefon}";
     }

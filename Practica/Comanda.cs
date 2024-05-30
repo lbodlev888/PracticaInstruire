@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Practica
 {
@@ -19,6 +20,7 @@ namespace Practica
         {
             date = DateTime.Today.ToString("yyyy-MM-dd");
             idPiesa = getPart();
+            if (idPiesa == -1) return;
             DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
             int cant = Convert.ToInt32(db.getScalar("SELECT Cantitate FROM Piesa WHERE idPart=" + idPiesa));
             if(cant == 0)
@@ -44,11 +46,18 @@ namespace Practica
         private int getPart()
         {
             int[] shops = Magazin.getShops().ToArray();
+            int[] options = Enumerable.Range(1, shops.Length).ToArray();
             string message = "Din ce magazin doresti sa comanzi? ", errorMsg = "Acest magazin nu exista";
-            int selMag = Program.getOption(message, errorMsg, shops);
+            int selMag = shops[Program.getOption(message, errorMsg, options)-1];
             int[] parts = Piesa.getParts(selMag).ToArray();
+            if(parts.Length == 0)
+            {
+                Program.printMessage("Acest magazin nu are nici o piesa", ConsoleColor.Yellow);
+                return -1;
+            }
+            options = Enumerable.Range(1, parts.Length).ToArray();
             message = "Ce piesa doresti sa comanzi? "; errorMsg = "Nu exista piesa selectata";
-            int selPart = Program.getOption(message, errorMsg, parts);
+            int selPart = parts[Program.getOption(message, errorMsg, options)-1];
             return selPart;
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Linq;
 
 namespace Practica
 {
@@ -11,18 +12,6 @@ namespace Practica
         private uint Cantitate;
         private int idMagazin;
         private string NumeMagazin;
-        
-        /*public Piesa(string nume, double pret, string magazin, uint cantitate = 20)
-        {
-            Nume = nume;
-            Pret = pret;
-            Cantitate = cantitate;
-            DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
-            NumeMagazin = magazin;
-            idMagazin = Convert.ToInt32(db.getScalar($"SELECT idMagazin FROM Magazin WHERE Nume='{magazin}'"));
-            db.closeConnection();
-            createPart();
-        }*/
         public Piesa(bool create=true)
         {
             Console.Write("Numele piesei: ");
@@ -31,9 +20,10 @@ namespace Practica
             Pret = double.Parse(Console.ReadLine());
             Console.Write("Cantitatea: ");
             Cantitate = uint.Parse(Console.ReadLine());
-            int[] options = Magazin.getShops().ToArray();
+            int[] shops = Magazin.getShops().ToArray();
+            int[] options = Enumerable.Range(1, shops.Length).ToArray();
             string message = "Ce magazin alegi? ", errorMesg = "Nu exista asa magazin";
-            int option = Program.getOption(message, errorMesg, options);
+            int option = shops[Program.getOption(message, errorMesg, options)-1];
             idMagazin = option;
             DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
             SQLiteDataReader reader = db.getReader("SELECT Nume FROM Magazin WHERE idMagazin=" + option);
@@ -111,10 +101,12 @@ namespace Practica
             DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
             SQLiteDataReader reader = db.getReader("SELECT * FROM Piesa WHERE idMagazin=" + idMagazin);
             List<int> ids = new List<int>();
+            int count = 1;
             while (reader.Read())
             {
-                Console.WriteLine($"{reader["idPart"]}) {reader["Nume"]} {reader["Pret"]} {reader["Cantitate"]}");
+                Console.WriteLine($"{count}) {reader["Nume"]} {reader["Pret"]} {reader["Cantitate"]}");
                 ids.Add(Convert.ToInt32(reader["idPart"]));
+                count++;
             }
             reader.Close();
             db.closeConnection();

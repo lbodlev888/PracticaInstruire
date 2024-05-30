@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Linq;
 
 namespace Practica
 {
@@ -9,21 +10,6 @@ namespace Practica
         private string Nume;
         private long Telefon;
         private string Adresa;
-        /*public Magazin(string nume, long telefon, string adresa)
-        {
-            Nume = nume;
-            Telefon = telefon;
-            Adresa = adresa;
-            DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
-            int check = Convert.ToInt32(db.getScalar($"SELECT idMagazin FROM Magazin WHERE Nume='{Nume}' AND Telefon='{Telefon}' AND Adresa='{Adresa}'"));
-            db.closeConnection();
-            if(check != 0)
-            {
-                Program.printMessage("Un magazin cu aceleasi date deja exista", ConsoleColor.Red);
-                return;
-            }
-            createMagazin();
-        }*/
         public Magazin(bool create=true)
         {
             Console.Write("Numele magazinului: ");
@@ -56,8 +42,9 @@ namespace Practica
         public static void updateMagazin()
         {
             int[] shops = getShops().ToArray();
+            int[] options = Enumerable.Range(1, shops.Length).ToArray();
             string message = "Ce magazin doresti sa modifici? ", errorMsg = "Magazinul nu exista";
-            int selMag = Program.getOption(message, errorMsg, shops);
+            int selMag = shops[Program.getOption(message, errorMsg, options)-1];
             Magazin mg = new Magazin(false);
             DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
             db.Query($"UPDATE Magazin SET Nume='{mg.Nume}', Telefon={mg.Telefon}, Adresa='{mg.Adresa}' WHERE idMagazin=" + selMag);
@@ -69,10 +56,12 @@ namespace Practica
             DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
             SQLiteDataReader reader = db.getReader("SELECT * FROM Magazin");
             List<int> ids = new List<int>();
+            int count = 1;
             while(reader.Read())
             {
-                Console.WriteLine($"{reader["idMagazin"]}) {reader["Nume"]} {reader["Telefon"]} {reader["Adresa"]}");
+                Console.WriteLine($"{count}) {reader["Nume"]} {reader["Telefon"]} {reader["Adresa"]}");
                 ids.Add(Convert.ToInt32(reader["idMagazin"]));
+                count++;
             }
             reader.Close();
             db.closeConnection();
@@ -81,10 +70,12 @@ namespace Practica
         public static void deleteShop()
         {
             List<int> ids = getShops();
+            int[] options = Enumerable.Range(1, ids.Count).ToArray();
             string message = "Ce magazin doresti sa stergi? ", optionError = "Nu avem o astfel de optiune";
-            int option = Program.getOption(message, optionError, ids.ToArray());
+            int option = ids[Program.getOption(message, optionError, options)-1];
             DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
             db.Query("DELETE FROM Magazin WHERE idMagazin = " + option);
+            db.Query("DELETE FROM Piesa WHERE idMagazin="+option);
             db.closeConnection();
             Program.printMessage("Magazin sters cu succes", ConsoleColor.Green);
         }

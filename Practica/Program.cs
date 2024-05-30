@@ -77,7 +77,8 @@ namespace Practica
                     User.deleteUser();
                     break;
                 case 6:
-                    DatabaseHelper.exportDatabase();
+                    string[] tables = { "UsersType", "Users", "Piesa", "Magazin", "Comenzi" };
+                    DatabaseHelper.exportDatabase(tables);
                     break;
             }
         }
@@ -109,8 +110,9 @@ namespace Practica
                     break;
                 case 2:
                     int[] shops = Magazin.getShops().ToArray();
+                    int[] options = Enumerable.Range(1, shops.Length).ToArray();
                     string message = "Ce magazin alegi? ", errorMsg = "Nu exista asa magazin";
-                    int selMag = getOption(message, errorMsg, shops);
+                    int selMag = shops[getOption(message, errorMsg, options)-1];
                     Console.WriteLine();
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Piesa.getParts(selMag);
@@ -124,10 +126,11 @@ namespace Practica
         }
         static void Main()
         {
+            //DatabaseHelper.importDatabase();
             if (!File.Exists(DATABASE))
                 SQLiteConnection.CreateFile(DATABASE);
-            int[] options = { 1, 2, 3 };
-            string intro = "\tBine ai venit\n1 - Creare cont nou\n2 - Logare cu un cont existent\n3 - Iesire\nCe doresti sa faci? ";
+            int[] options = { 1, 2, 3, 4 };
+            string intro = "\tBine ai venit\n1 - Creare cont nou\n2 - Logare cu un cont existent\n3 - Importa baza de date\n4 - Iesire\nCe doresti sa faci? ";
             string optionError = "\nEroare: Nu exista o astfel de optiune\n";
             int option = getOption(intro, optionError, options);
             switch (option)
@@ -179,8 +182,10 @@ namespace Practica
                                 moderatorWork(option);
                                 break;
                             case 2:
-                                message = "1 - Adauga magazin\n2 - Sterge magazin\n3 - Modifica magazin\n4 - Privilegiaza utilizatorul\n5 - Sterge utilizatorul\n6 - Exporteaza baza de date in fisier CSV\n7 - Log out\nCe doresti sa faci? ";
-                                options = new int[] { 1, 2, 3, 4, 5, 6, 7 };
+                                message = "1 - Adauga magazin\n2 - Sterge magazin\n3 - Modifica magazin\n" +
+                                    "4 - Privilegiaza utilizatorul\n5 - Sterge utilizatorul\n" +
+                                    "6 - Exporteaza baza de date in fisiere CSV\n7 - Meniul principal\nCe doresti sa faci? ";
+                                options = new int[] { 1, 2, 3, 4, 5, 6, 7};
                                 option = getOption(message, optionError, options);
                                 if (option == 7)
                                 {
@@ -193,6 +198,10 @@ namespace Practica
                         }
                     }
                 case 3:
+                    string[] tables = { "UsersType", "Users", "Piesa", "Magazin", "Comenzi" };
+                    DatabaseHelper.importDatabase(tables);
+                    break;
+                case 4:
                     return;
             }
             Main();
