@@ -17,9 +17,21 @@ namespace Practica
             Console.Write("Numele piesei: ");
             Nume = Console.ReadLine();
             Console.Write("Pretul piesei: ");
-            Pret = double.Parse(Console.ReadLine());
+            try
+            { Pret = double.Parse(Console.ReadLine()); }
+            catch(FormatException)
+            {
+                Program.printMessage("Pret invalid", ConsoleColor.Red);
+                return;
+            }
             Console.Write("Cantitatea: ");
-            Cantitate = uint.Parse(Console.ReadLine());
+            try
+            { Cantitate = uint.Parse(Console.ReadLine()); }
+            catch (FormatException)
+            {
+                Program.printMessage("Cantitate invalida", ConsoleColor.Red);
+                return;
+            }
             int[] shops = Magazin.getShops().ToArray();
             int[] options = Enumerable.Range(1, shops.Length).ToArray();
             string message = "Ce magazin alegi? ", errorMesg = "Nu exista asa magazin";
@@ -39,25 +51,21 @@ namespace Practica
                 Program.printMessage("Piesa adaugata cu succes", ConsoleColor.Green);
             }
         }
-        /*private void createPart()
-        {
-            DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
-            db.Query($"INSERT INTO Produs (Nume, Pret, Cantitate, idMagazin) VALUES ('{Nume}', '{Pret}', '{Cantitate}', '{idMagazin}')");
-            db.closeConnection();
-        }*/
         public static void deletePart()
         {
             int[] shops = Magazin.getShops().ToArray();
+            int[] options = Enumerable.Range(1, shops.Length).ToArray();
             string message = "Din ce magazin doresti sa stergi? ", errorMsg = "Nu exista asa magazin";
-            int option = Program.getOption(message, errorMsg, shops);
+            int option = shops[Program.getOption(message, errorMsg, options)-1];
             int[] parts = getParts(option).ToArray();
+            options = Enumerable.Range(1, parts.Length).ToArray();
             if (parts.Length == 0)
             {
                 Program.printMessage("Magazinul selectat nu are nici o piesa", ConsoleColor.Red);
                 return;
             }
             message = "Ce piesa doresti sa stergi? "; errorMsg = "Piesa nu exista";
-            option = Program.getOption(message, errorMsg, parts);
+            option = parts[Program.getOption(message, errorMsg, options)-1];
             DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
             db.Query("DELETE FROM Piesa WHERE idPart=" + option);
             db.closeConnection();
@@ -66,36 +74,25 @@ namespace Practica
         public static void updatePart()
         {
             int[] shops = Magazin.getShops().ToArray();
+            int[] options = Enumerable.Range(1, shops.Length).ToArray();
             string message = "Din ce magazin doresti sa stergi? ", errorMsg = "Nu exista asa magazin";
-            int option = Program.getOption(message, errorMsg, shops);
+            int option = shops[Program.getOption(message, errorMsg, options) - 1];
             int[] parts = getParts(option).ToArray();
+            options = Enumerable.Range(1, parts.Length).ToArray();
             if (parts.Length == 0)
             {
                 Program.printMessage("Magazinul selectat nu are nici o piesa", ConsoleColor.Red);
                 return;
             }
             message = "Ce piesa doresti sa modifici? "; errorMsg = "Piesa nu exista";
-            option = Program.getOption(message, errorMsg, parts);
+            option = parts[Program.getOption(message, errorMsg, options) - 1];
             Piesa part = new Piesa(false);
+            if (part.Pret == 0 || part.Nume.Length == 0 || part.Cantitate == 0 || part.idMagazin == 0) return;
             DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
             db.Query($"UPDATE Piesa SET Nume='{part.Nume}', Pret={part.Pret}, Cantitate={part.Cantitate}, idMagazin={part.idMagazin} WHERE idPart=" + option);
             db.closeConnection();
             Program.printMessage("Piesa a fost modificata cu succes", ConsoleColor.Green);
         }
-        /*public static List<int> getParts()
-        {
-            DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
-            SQLiteDataReader reader = db.getReader("SELECT * FROM Piesa");
-            List<int> ids = new List<int>();
-            while (reader.Read())
-            {
-                Console.WriteLine($"{reader["idPart"]}) {reader["Nume"]} {reader["Pret"]} {reader["Cantitate"]}");
-                ids.Add(Convert.ToInt32(reader["idPart"]));
-            }
-            reader.Close();
-            db.closeConnection();
-            return ids;
-        }*/
         public static List<int> getParts(int idMagazin)
         {
             DatabaseHelper db = new DatabaseHelper(Program.DATABASE);

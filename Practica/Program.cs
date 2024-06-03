@@ -115,7 +115,8 @@ namespace Practica
                     int selMag = shops[getOption(message, errorMsg, options)-1];
                     Console.WriteLine();
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Piesa.getParts(selMag);
+                    if (Piesa.getParts(selMag).Count == 0)
+                        printMessage("Magazinul selectat nu are nici o piesa", ConsoleColor.Yellow);
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine();
                     break;

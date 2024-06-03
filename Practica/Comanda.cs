@@ -31,8 +31,12 @@ namespace Practica
             Console.WriteLine($"In stoc: {cant} piese");
             while (true)
             {
-                Console.Write("Cantitatea: ");
-                Cantitate = uint.Parse(Console.ReadLine());
+                try
+                {
+                    Console.Write("Cantitatea: ");
+                    Cantitate = uint.Parse(Console.ReadLine());
+                }
+                catch (Exception) { Program.printMessage("Nu este numar valid", ConsoleColor.Red); continue; }
                 if (Cantitate <= cant) break;
                 Program.printMessage("Prea mult", ConsoleColor.Red);
             }

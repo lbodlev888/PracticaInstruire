@@ -91,7 +91,7 @@ namespace Practica
                 if (password != reader["Password"].ToString())
                 {
                     Program.printMessage("\nAutentificarea nu a reusit", ConsoleColor.Red);
-			reader.Close();
+			        reader.Close();
 	                db.closeConnection();
                     return null;
                 }
@@ -105,7 +105,7 @@ namespace Practica
             catch(Exception)
             {
                 Program.printMessage("\nCont inexistent", ConsoleColor.Red);
-		reader.Close();
+		        reader.Close();
                 db.closeConnection();
                 return null;
             }
@@ -123,18 +123,6 @@ namespace Practica
             db.Query($"UPDATE Users SET Type={setPriv} WHERE idUser={userSelect}");
             db.closeConnection();
             Program.printMessage("Privilegiu setat", ConsoleColor.Green);
-            /*int count = getUsers();
-            string message = "Ce utilizator doresti sa privilegiezi? ", optionError = "Nu exista acest utilizator";
-            int[] options = new int[count];
-            for (int i = 1; i <= count; i++) options[i - 1] = i;
-            int userSelect = Program.getOption(message, optionError, options);
-            message = "0 - Utilizator\n1 - Moderator\n3 - Administrator\nCe privilegiu doresti sa setezi? ";
-            options = new int[] { 0, 1, 2 };
-            int setPriv = Program.getOption(message, optionError, options);
-            DatabaseHelper db = new DatabaseHelper(Program.DATABASE);
-            db.Query($"UPDATE Users SET Type={setPriv} WHERE idUser={userSelect}");
-            db.closeConnection();
-            Program.printMessage("Privilegiu setat", ConsoleColor.Green);*/
         }
         public static void deleteUser()
         {
